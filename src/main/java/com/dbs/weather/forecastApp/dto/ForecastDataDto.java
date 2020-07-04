@@ -9,6 +9,12 @@ import lombok.Setter;
 @Builder
 public class ForecastDataDto {
 
+    private String code;
     private String location;
-    private String forecast;
+    private String icon;
+    private String sunriseTime;
+    private String sunsetTime;
+    private String temperatureHigh;
+    private String temperatureLow;
+    private String summary;
 }

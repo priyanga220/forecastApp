@@ -19,7 +19,7 @@
         </tr>
         <tr th:each="locForecast : ${forecastList}">
             <td th:text="${locForecast.location}"></td>
-            <td th:text="${locForecast.forecast}"></td>
+            <td th:text="${locForecast.summary}"></td>
         </tr>
     </table>
 </div>
