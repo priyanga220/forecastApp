@@ -7,6 +7,7 @@ import com.dbs.weather.forecastApp.dto.darkskyData.DarkskyForecastObj;
 import com.dbs.weather.forecastApp.model.LocationModel;
 import com.dbs.weather.forecastApp.service.DarkskyApiService;
 import com.dbs.weather.forecastApp.service.ForecastService;
+import com.dbs.weather.forecastApp.util.AsyncJobUtil;
 import com.dbs.weather.forecastApp.util.ForecastUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,9 @@ public class ForecastServiceImpl implements ForecastService {
 
     @Autowired
     private LocationRepository locationRepository;
+
+    @Autowired
+    private AsyncJobUtil asyncJobUtil;
 
     @Override
     public List<ForecastDataDto> retrieveLatestForecast() {
@@ -81,6 +85,7 @@ public class ForecastServiceImpl implements ForecastService {
                 logger.error("Error occurred fetching forecast data from API for location : {}" + locationConfiguration.getLocations().get(locationCode).getName(), ex);
             }
         });
+        asyncJobUtil.cacheForecasts(forecastDtos);
         return forecastDtos;
     }
 

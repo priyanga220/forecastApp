@@ -14,4 +14,7 @@ public interface LocationRepository extends MongoRepository<LocationModel, Strin
 
     @Query(value = "{ 'forecasts.date': ?0 }")
     List<LocationModel> findByForecastsDate(LocalDate date);
+
+    @Query(value = "{ 'code': ?0 }")
+    Optional<LocationModel> findByCode(String code);
 }
