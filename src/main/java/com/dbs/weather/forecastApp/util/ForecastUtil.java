@@ -3,6 +3,7 @@ package com.dbs.weather.forecastApp.util;
 import com.dbs.weather.forecastApp.dto.ForecastDataDto;
 import com.dbs.weather.forecastApp.dto.darkskyData.DarkskyForecastObj;
 import com.dbs.weather.forecastApp.dto.darkskyData.ForecastData;
+import com.dbs.weather.forecastApp.model.WeatherForecastModel;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -23,6 +24,19 @@ public class ForecastUtil {
                 .sunsetTime(Instant.ofEpochSecond(data.getSunsetTime()).atZone(ZoneId.of(forecastObj.getTimezone())).format(formatter))
                 .temperatureHigh(String.valueOf(data.getTemperatureHigh()))
                 .temperatureLow(String.valueOf(data.getTemperatureLow()))
+                .build();
+    }
+
+    public static ForecastDataDto convertForecastModelToForecastDto(String locationCode, String locationName, WeatherForecastModel forecastModel) {
+        return ForecastDataDto.builder()
+                .code(locationCode)
+                .location(locationName)
+                .summary(forecastModel.getSummary())
+                .icon(forecastModel.getIcon())
+                .sunriseTime(forecastModel.getSunriseTime())
+                .sunsetTime(forecastModel.getSunsetTime())
+                .temperatureHigh(String.valueOf(forecastModel.getTemperatureHigh()))
+                .temperatureLow(String.valueOf(forecastModel.getTemperatureLow()))
                 .build();
     }
 

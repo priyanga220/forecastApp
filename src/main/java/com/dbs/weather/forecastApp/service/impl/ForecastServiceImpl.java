@@ -1,8 +1,10 @@
 package com.dbs.weather.forecastApp.service.impl;
 
 import com.dbs.weather.forecastApp.config.LocationConfiguration;
+import com.dbs.weather.forecastApp.dao.LocationRepository;
 import com.dbs.weather.forecastApp.dto.ForecastDataDto;
 import com.dbs.weather.forecastApp.dto.darkskyData.DarkskyForecastObj;
+import com.dbs.weather.forecastApp.model.LocationModel;
 import com.dbs.weather.forecastApp.service.DarkskyApiService;
 import com.dbs.weather.forecastApp.service.ForecastService;
 import com.dbs.weather.forecastApp.util.ForecastUtil;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -28,27 +31,40 @@ public class ForecastServiceImpl implements ForecastService {
     @Autowired
     private DarkskyApiService darkskyApiService;
 
+    @Autowired
+    private LocationRepository locationRepository;
+
     @Override
     public List<ForecastDataDto> retrieveLatestForecast() {
         List<ForecastDataDto> result = new ArrayList<>();
         Map<String, CompletableFuture<DarkskyForecastObj>> forecastFutureObjects = new HashMap<>();
 
+        Map<String, ForecastDataDto> cachedForecasts = fetchForecastsFromCache();
+
         locationConfiguration.getLocations().forEach((locationKey, location) -> {
 
-            Optional<ForecastDataDto> forecastDtoObj = Optional.empty();
-
-            if (forecastDtoObj.isPresent()) {
-                result.add(forecastDtoObj.get());
+            if (cachedForecasts.containsKey(locationKey)) {
+                result.add(cachedForecasts.get(locationKey));
             } else {
                 forecastFutureObjects.put(locationKey, darkskyApiService.fetchForecastForLocation(location.getLocationMatrix()));
                 logger.info("Darksky Rest call made for {} ", location.getName());
             }
         });
-
-        if(!CollectionUtils.isEmpty(forecastFutureObjects)) {
+        if (!CollectionUtils.isEmpty(forecastFutureObjects)) {
             result.addAll(processForecastFutureResults(forecastFutureObjects));
         }
         return result;
+    }
+
+    private Map<String, ForecastDataDto> fetchForecastsFromCache() {
+        LocalDate currentDate = LocalDate.now();
+        List<LocationModel> cachedForecasts = locationRepository.findByForecastsDate(currentDate);
+        if (!CollectionUtils.isEmpty(cachedForecasts)) {
+            return cachedForecasts.stream().map(loc ->
+                    ForecastUtil.convertForecastModelToForecastDto(loc.getCode(), locationConfiguration.getLocationByCode(loc.getCode()).getName(), loc.getForecasts().stream().filter(fc -> fc.getDate().equals(currentDate)).findFirst().get()))
+                    .collect(Collectors.toMap(fcDto -> fcDto.getCode(), fcDto -> fcDto));
+        }
+        return Collections.emptyMap();
     }
 
     private List<ForecastDataDto> processForecastFutureResults(Map<String, CompletableFuture<DarkskyForecastObj>> forecastFuturesMap) {
