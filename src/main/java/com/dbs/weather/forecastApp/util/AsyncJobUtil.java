@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -57,6 +58,18 @@ public class AsyncJobUtil {
                     }
             );
         }
+    }
 
+
+    //Run the Housekeeping Job everyday at 00:01AM in background (ss mm hh * Month DayOfWeek)
+    //Remove Forecast data prior than 3 days from MongoDB
+    @Scheduled(cron = "0 1 0 * * ?")
+    @Async
+    public void houseKeepOldCache() {
+        logger.info("Housekeeping for Old forecasts started");
+        List<LocationModel> cachedForecats = locationRepository.findAll();
+        cachedForecats.forEach(cachedFc -> cachedFc.getForecasts().removeIf(fc -> fc.getDate().isBefore(LocalDate.now().minusDays(2))));
+        locationRepository.saveAll(cachedForecats);
+        logger.info("Housekeeping for Old forecasts finished");
     }
 }
