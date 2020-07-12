@@ -26,6 +26,9 @@ public class AsyncJobUtil {
     @Autowired
     private LocationRepository locationRepository;
 
+    /*
+    * Persists given forecast information to MongoDB cache
+     */
     @Async
     public void cacheForecasts(List<ForecastDataDto> forecastDtos) {
         if (!CollectionUtils.isEmpty(forecastDtos)) {
@@ -36,7 +39,6 @@ public class AsyncJobUtil {
                         Optional<LocationModel> locationModelObj = locationRepository.findByCode(fcDto.getCode());
                         if (locationModelObj.isPresent()) {
                             locationModel = locationModelObj.get();
-
                         } else {
                             locationModel = LocationModel.builder().code(fcDto.getCode()).build();
                         }

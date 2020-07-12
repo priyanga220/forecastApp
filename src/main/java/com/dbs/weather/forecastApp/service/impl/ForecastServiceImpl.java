@@ -19,7 +19,6 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Service
 public class ForecastServiceImpl implements ForecastService {
@@ -48,6 +47,7 @@ public class ForecastServiceImpl implements ForecastService {
         locationConfiguration.getLocations().forEach((locationKey, location) -> {
 
             if (cachedForecasts.containsKey(locationKey)) {
+                logger.info("Cached Data available for {} ", location.getName());
                 result.add(cachedForecasts.get(locationKey));
             } else {
                 forecastFutureObjects.put(locationKey, darkskyApiService.fetchForecastForLocation(location.getLocationMatrix()));

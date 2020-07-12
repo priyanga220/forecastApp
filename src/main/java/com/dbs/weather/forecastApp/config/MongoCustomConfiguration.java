@@ -17,6 +17,7 @@ public class MongoCustomConfiguration {
     public MongoCustomConversions mongoCustomConversions() {
         final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+        //Custom Conversions for Local Date <-> String[yyyy-MM-dd]
         return new MongoCustomConversions(Arrays.asList(new Converter[]{
 
                 new Converter<LocalDate, String>() {

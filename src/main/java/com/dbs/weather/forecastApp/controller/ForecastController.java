@@ -17,10 +17,9 @@ public class ForecastController {
     private ForecastService forecastService;
 
     @GetMapping("/")
-    public String homePage(Model model) {
+    public String forecastPage(Model model) {
 
         logger.info("Request was made for fetching Forecast Data");
-
         model.addAttribute("forecastList", forecastService.retrieveLatestForecast());
         return "forecast";
     }

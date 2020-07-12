@@ -15,6 +15,9 @@ import java.util.Map;
 @Setter
 public class LocationConfiguration {
 
+    /*
+    * Populates Location information from Properties.
+     */
     private Map<String, Location> locations = new HashMap<>();
 
     public Location getLocationByCode(String code) {
