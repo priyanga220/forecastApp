@@ -1,0 +1,45 @@
+body,html {
+    margin: 0;
+    padding: 0;
+}
+* {
+    box-sizing: border-box;
+}
+
+#forecastCarousel {
+    height: 99vh;
+    width: 99vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#forecastCarousel .carousel-caption {
+    color: black;
+    text-align: center;
+    /*top: auto;*/
+    top: 20%;
+    transform: translateY(-50%);
+    bottom: initial;
+}
+
+#forecastCarousel > .carousel-indicators > li {
+    border-radius: 0px;
+    min-width: 25px;
+    background-color: #9d9d9d;
+    border: 1px solid black;
+    margin-right: 10px;;
+    margin-left: 10px;;
+}
+
+#forecastCarousel > .carousel-indicators > .active {
+    background-color: orange;
+}
+
+.loc-img{
+  opacity: 0.4;
+  height: 99vh;
+  width: 99vw;
+}
+
+
